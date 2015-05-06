@@ -9,8 +9,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -23,7 +21,7 @@ public class Problema {
     private int[] valor;
     private int[] peso;
 
-    public void readFile(String nomeArquivo) {
+    public boolean readFile(String nomeArquivo) {
         try {
             FileReader fileReader = new FileReader(new File(nomeArquivo));
             BufferedReader bufferedReader = new BufferedReader(fileReader);
@@ -35,11 +33,11 @@ public class Problema {
             if (bufferedReader.ready()) {
                 String linha = bufferedReader.readLine();
                 tamanho = Integer.parseInt(linha);
-                valor = new int[tamanho];
-                peso = new int[tamanho];
+                valor = new int[tamanho + 1];
+                peso = new int[tamanho + 1];
             }
 
-            int posicao = 0;
+            int posicao = 1;
             while (bufferedReader.ready()) {
                 String linha = bufferedReader.readLine();
                 String[] parametros = linha.split("\t");
@@ -48,42 +46,62 @@ public class Problema {
             }
             bufferedReader.close();
             fileReader.close();
+            return true;
         } catch (IOException | NumberFormatException ex) {
             System.out.println("Arquivo " + nomeArquivo + " não encontrado.");
+            return false;
         }
     }
 
-    public int problema() {
+    public void knapsack() {
         try {
-            List<List> matriz = new ArrayList<>(tamanho + 1);
-            for (int i = 0; i < tamanho + 1; i++) {
-                List<Integer> linha = new ArrayList<>(capacidade + 1);
-                for (int j = 0; j < capacidade + 1; j++) {
-                    linha.add(0);
-                }
-                matriz.add(linha);
-            }
-            //int[][] K = new int[tamanho + 1][capacidade + 1];
-            for (int i = 0; i <= tamanho; i++) {
-                for (int w = 0; w <= capacidade; w++) {
-                    if (i == 0 || w == 0) {
-                        //K[i][w] = 0;
-                        matriz.get(i).set(w, 0);
-                    } else if (peso[i - 1] <= w) {
-                        matriz.get(i).set(w, Math.max(valor[i - 1] + (int) matriz.get(i - 1).get(w - peso[i - 1]), (int) matriz.get(i - 1).get(w)));
-                        //matriz.get(i).set(w, Math.max(valor[i - 1] + K[i - 1][w - peso[i - 1]], K[i - 1][w]));
-                        //K[i][w] = Math.max(valor[i - 1] + K[i - 1][w - peso[i - 1]], K[i - 1][w]);
-                    } else {
-                        matriz.get(i).set(w, matriz.get(i - 1).get(w));
-                        //K[i][w] = K[i - 1][w];
+            int[][] opt = new int[tamanho + 1][capacidade + 1];
+            boolean[][] sol = new boolean[tamanho + 1][capacidade + 1];
+
+            for (int n = 1; n <= tamanho; n++) {
+                for (int w = 1; w <= capacidade; w++) {
+
+                    // don't take item n
+                    int option1 = opt[n - 1][w];
+
+                    // take item n
+                    int option2 = Integer.MIN_VALUE;
+                    if (peso[n] <= w) {
+                        option2 = valor[n] + opt[n - 1][w - peso[n]];
                     }
+
+                    // select better of two options
+                    opt[n][w] = Math.max(option1, option2);
+                    sol[n][w] = (option2 > option1);
                 }
             }
-            return (int) matriz.get(tamanho).get(capacidade);
-//            return K[tamanho][capacidade];
+
+            // determine which items to take
+            boolean[] take = new boolean[tamanho + 1];
+            for (int n = tamanho, w = capacidade; n > 0; n--) {
+                if (sol[n][w]) {
+                    take[n] = true;
+                    w = w - peso[n];
+                } else {
+                    take[n] = false;
+                }
+            }
+
+            System.out.println("Capacidade = " + capacidade);
+            System.out.println("Itens = " + tamanho);
+            // print results
+            System.out.println("item" + "\t" + "valor" + "\t" + "peso");
+            int pesoAtual = 0;
+            for (int n = 1; n <= tamanho; n++) {
+                if (take[n]) {
+                    pesoAtual += peso[n];
+                    System.out.println(n + "\t" + valor[n] + "\t" + peso[n]);
+                }
+            }
+            System.out.println("Maior valor = " + opt[tamanho][capacidade]);
+            System.out.println("Maior peso = " + pesoAtual);
         } catch (OutOfMemoryError | Exception exception) {
-            System.out.println(exception.getMessage());
-            return -1;
+            System.out.println(exception.toString());
         }
     }
 

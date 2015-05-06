@@ -18,9 +18,11 @@ public class Main {
     public static void main(String[] args) {
         // TODO code application logic here
         Problema problema = new Problema();
-        problema.readFile("instancias/teste10000.txt");
-        //problema.readFile("teste.txt");
-        System.out.println(problema.problema());
+        //if(problema.readFile("instancias/teste10000.txt")){
+        if(problema.readFile("teste3.txt")){
+            //System.out.println(problema.problema());
+            problema.knapsack();
+        }
     }
     
 }
