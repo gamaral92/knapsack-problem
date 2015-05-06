@@ -1,0 +1,8 @@
+c //capacidade de carga do conteiner
+n //tamanho do conjuntoA
+v1\tp1 //valor do item 1 e peso do item1
+v2\tp2 //valor do item 2 e peso do item2
+
+...
+
+vn\tpn //valor do item n e peso item n
