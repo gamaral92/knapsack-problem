@@ -55,50 +55,45 @@ public class Problema {
 
     public void knapsack() {
         try {
-            int[][] opt = new int[tamanho + 1][capacidade + 1];
-            boolean[][] sol = new boolean[tamanho + 1][capacidade + 1];
+            int[][] matriz = new int[tamanho + 1][capacidade + 1];
+            boolean[][] solucoes = new boolean[tamanho + 1][capacidade + 1];
 
             for (int n = 1; n <= tamanho; n++) {
                 for (int w = 1; w <= capacidade; w++) {
 
-                    // don't take item n
-                    int option1 = opt[n - 1][w];
+                    int opcao = matriz[n - 1][w];
 
-                    // take item n
-                    int option2 = Integer.MIN_VALUE;
+                    int opcao2 = Integer.MIN_VALUE;
                     if (peso[n] <= w) {
-                        option2 = valor[n] + opt[n - 1][w - peso[n]];
+                        opcao2 = valor[n] + matriz[n - 1][w - peso[n]];
                     }
 
-                    // select better of two options
-                    opt[n][w] = Math.max(option1, option2);
-                    sol[n][w] = (option2 > option1);
+                    matriz[n][w] = Math.max(opcao, opcao2);
+                    solucoes[n][w] = (opcao2 > opcao);
                 }
             }
 
-            // determine which items to take
-            boolean[] take = new boolean[tamanho + 1];
+            boolean[] itens = new boolean[tamanho + 1];
             for (int n = tamanho, w = capacidade; n > 0; n--) {
-                if (sol[n][w]) {
-                    take[n] = true;
+                if (solucoes[n][w]) {
+                    itens[n] = true;
                     w = w - peso[n];
                 } else {
-                    take[n] = false;
+                    itens[n] = false;
                 }
             }
 
             System.out.println("Capacidade = " + capacidade);
             System.out.println("Itens = " + tamanho);
-            // print results
             System.out.println("item" + "\t" + "valor" + "\t" + "peso");
             int pesoAtual = 0;
             for (int n = 1; n <= tamanho; n++) {
-                if (take[n]) {
+                if (itens[n]) {
                     pesoAtual += peso[n];
                     System.out.println(n + "\t" + valor[n] + "\t" + peso[n]);
                 }
             }
-            System.out.println("Maior valor = " + opt[tamanho][capacidade]);
+            System.out.println("Maior valor = " + matriz[tamanho][capacidade]);
             System.out.println("Maior peso = " + pesoAtual);
         } catch (OutOfMemoryError | Exception exception) {
             System.out.println(exception.toString());
