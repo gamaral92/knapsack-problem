@@ -22,6 +22,7 @@ public class Main {
         //if(problema.readFile("teste.txt")){
             //System.out.println(problema.problema());
             problema.knapsack();
+            //problema.gerarArquivo();
         }
     }
     

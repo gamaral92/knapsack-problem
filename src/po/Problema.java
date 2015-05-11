@@ -6,9 +6,13 @@
 package po;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -50,6 +54,39 @@ public class Problema {
         } catch (IOException | NumberFormatException ex) {
             System.out.println("Arquivo " + nomeArquivo + " não encontrado.");
             return false;
+        }
+    }
+
+    public void gerarArquivo() {
+        try {
+            FileWriter fileWriter = new FileWriter(new File("KP.dat"));
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+
+            bufferedWriter.write("n=" + tamanho + ";");
+            bufferedWriter.newLine();
+            bufferedWriter.write("K=" + capacidade + ";");
+            bufferedWriter.newLine();
+            bufferedWriter.write("p=[");
+            for (int i = 1; i < valor.length; i++) {
+                if (valor.length - 2 >= i) {
+                    bufferedWriter.write(valor[i] + ", ");
+                } else {
+                    bufferedWriter.write(valor[i] + "];");
+                }
+            }
+            bufferedWriter.newLine();
+            bufferedWriter.write("w=[");
+            for (int i = 1; i < peso.length; i++) {
+                if (peso.length - 2 >= i) {
+                    bufferedWriter.write(peso[i] + ", ");
+                } else {
+                    bufferedWriter.write(peso[i] + "];");
+                }
+            }
+            bufferedWriter.newLine();
+            bufferedWriter.close();
+            fileWriter.close();
+        } catch (IOException ex) {
         }
     }
 
